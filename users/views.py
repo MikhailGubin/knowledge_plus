@@ -6,5 +6,6 @@ from users.serializer import UserSerializer
 
 class UserViewSet(ModelViewSet):
     """Создаёт CRUD для объекта класса 'Пользователь'"""
+
     queryset = User.objects.all()
     serializer_class = UserSerializer
