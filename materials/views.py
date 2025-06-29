@@ -8,14 +8,20 @@ from rest_framework.generics import (
 from rest_framework.viewsets import ModelViewSet
 
 from materials.models import Course, Lesson
-from materials.serializer import CourseSerializer, LessonSerializer
+from materials.serializer import CourseSerializer, LessonSerializer, CourseDetailSerializer
 
 
 class CourseViewSet(ModelViewSet):
     """Создаёт CRUD для объекта класса 'Курс'"""
 
     queryset = Course.objects.all()
-    serializer_class = CourseSerializer
+    # serializer_class = CourseSerializer
+
+    def get_serializer_class(self):
+        """ Выбирает нужный сериализотор при работе с объектами 'Курс' """
+        if self.action == "retrieve":
+            return CourseDetailSerializer
+        return CourseSerializer
 
 
 class LessonCreateAPIView(CreateAPIView):
