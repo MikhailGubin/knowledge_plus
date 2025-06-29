@@ -1,14 +1,11 @@
-from rest_framework.generics import (
-    CreateAPIView,
-    DestroyAPIView,
-    ListAPIView,
-    RetrieveAPIView,
-    UpdateAPIView,
-)
+from rest_framework.generics import (CreateAPIView, DestroyAPIView,
+                                     ListAPIView, RetrieveAPIView,
+                                     UpdateAPIView)
 from rest_framework.viewsets import ModelViewSet
 
 from materials.models import Course, Lesson
-from materials.serializer import CourseSerializer, LessonSerializer, CourseDetailSerializer
+from materials.serializer import (CourseDetailSerializer, CourseSerializer,
+                                  LessonSerializer)
 
 
 class CourseViewSet(ModelViewSet):
@@ -18,7 +15,7 @@ class CourseViewSet(ModelViewSet):
     # serializer_class = CourseSerializer
 
     def get_serializer_class(self):
-        """ Выбирает нужный сериализотор при работе с объектами 'Курс' """
+        """Выбирает нужный сериализотор при работе с объектами 'Курс'"""
         if self.action == "retrieve":
             return CourseDetailSerializer
         return CourseSerializer
