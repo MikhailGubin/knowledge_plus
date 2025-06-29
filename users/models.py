@@ -59,13 +59,10 @@ class Payment(models.Model):
         help_text="Укажите пользователя",
     )
     payment_date = models.DateTimeField(
-        auto_now_add=True,
+        auto_now=True,
+        null=True,
         verbose_name="Дата и время платежа",
     )
-    # models.DateTimeField(
-    #     auto_now=True,
-    #     verbose_name="Дата последнего изменения информации о продукте",
-    # )
     paid_course = models.ForeignKey(
         Course,
         on_delete=models.SET_NULL,

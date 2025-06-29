@@ -12,10 +12,20 @@ router = SimpleRouter()
 router.register("", UserViewSet)
 urlpatterns = [
     path("payments/", PaymentListAPIView.as_view(), name="payments_list"),
-    path("payments/<int:pk>/", PaymentRetrieveAPIView.as_view(), name="payments_retrieve"),
+    path(
+        "payments/<int:pk>/", PaymentRetrieveAPIView.as_view(), name="payments_retrieve"
+    ),
     path("payments/create/", PaymentCreateAPIView.as_view(), name="payments_create"),
-    path("payments/<int:pk>/delete/", PaymentDestroyAPIView.as_view(), name="payments_delete",),
-    path("payments/<int:pk>/update/", PaymentUpdateAPIView.as_view(), name="payments_update",),
+    path(
+        "payments/<int:pk>/delete/",
+        PaymentDestroyAPIView.as_view(),
+        name="payments_delete",
+    ),
+    path(
+        "payments/<int:pk>/update/",
+        PaymentUpdateAPIView.as_view(),
+        name="payments_update",
+    ),
 ]
 
 urlpatterns += router.urls

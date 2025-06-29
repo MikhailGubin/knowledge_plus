@@ -4,11 +4,11 @@
     "pk": 1,
     "fields": {
         "user": 2,
-        "payment_date": "2025-06-29T13:38:06.380Z",
+        "payment_date": "2025-06-29T15:41:06.157Z",
         "paid_course": 4,
         "paid_lesson": null,
         "amount": 2000.0,
-        "payment_method": null
+        "payment_method": "cash"
     }
 },
 {
@@ -28,7 +28,7 @@
     "pk": 3,
     "fields": {
         "user": 3,
-        "payment_date": "2025-06-29T13:53:26.380Z",
+        "payment_date": "2025-06-29T15:09:15.248Z",
         "paid_course": null,
         "paid_lesson": 4,
         "amount": 600.0,
