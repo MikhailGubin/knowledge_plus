@@ -10,11 +10,11 @@ from users.models import Payment, User
 from users.serializer import PaymentSerializer, UserSerializer
 
 
-class UserViewSet(ModelViewSet):
-    """Создаёт CRUD для объекта класса 'Пользователь'"""
-
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+# class UserViewSet(ModelViewSet):
+#     """Создаёт CRUD для объекта класса 'Пользователь'"""
+#
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
 
 
 class UserCreateAPIView(CreateAPIView):
@@ -31,8 +31,36 @@ class UserCreateAPIView(CreateAPIView):
         user.save()
 
 
+class UserListAPIView(ListAPIView):
+    """Передаёт представления объектов класса 'Пользователь'"""
+
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserRetrieveAPIView(RetrieveAPIView):
+    """Передаёт представление определённого объекта класса 'Пользователь'"""
+
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserUpdateAPIView(UpdateAPIView):
+    """Меняет информацию в представлении объекта класса 'Пользователь'"""
+
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserDestroyAPIView(DestroyAPIView):
+    """Удаляет объект класса 'Пользователь'"""
+
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
 class PaymentCreateAPIView(CreateAPIView):
-    """Создаёт объект класса 'Платеж'"""
+    """Создает объект класса 'Платеж'"""
 
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
