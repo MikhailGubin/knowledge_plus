@@ -1,8 +1,8 @@
 from rest_framework.generics import (CreateAPIView, DestroyAPIView,
                                      ListAPIView, RetrieveAPIView,
                                      UpdateAPIView)
-from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.viewsets import ModelViewSet
 
 from materials.models import Course, Lesson
 from materials.serializer import CourseSerializer, LessonSerializer
@@ -22,20 +22,20 @@ class CourseViewSet(ModelViewSet):
     #     return CourseSerializer
 
     def perform_create(self, serializer):
-        """ Добавляет текущего пользователя в поле "Владелец" модели "Курс" """
+        """Добавляет текущего пользователя в поле "Владелец" модели "Курс" """
         course = serializer.save()
         course.owner = self.request.user
         course.save()
 
     def get_permissions(self):
-        """ Устанавливает права доступа для пользователя при работе с объектами "Курс" """
+        """Устанавливает права доступа для пользователя при работе с объектами "Курс" """
 
         if self.action == "create":
             self.permission_classes = (~IsModer,)
-        elif self.action in ["list" ,"update", "retrieve"]:
+        elif self.action in ["list", "update", "retrieve"]:
             self.permission_classes = (IsModer | IsOwner,)
         elif self.action == "destroy":
-            self.permission_classes = (IsOwner, )
+            self.permission_classes = (IsOwner,)
         return super().get_permissions()
 
 
@@ -47,7 +47,7 @@ class LessonCreateAPIView(CreateAPIView):
     permission_classes = (~IsModer, IsAuthenticated)
 
     def perform_create(self, serializer):
-        """ Добавляет текущего пользователя в поле "Владелец" модели "Урок" """
+        """Добавляет текущего пользователя в поле "Владелец" модели "Урок" """
         lesson = serializer.save()
         lesson.owner = self.request.user
         lesson.save()
@@ -58,7 +58,8 @@ class LessonListAPIView(ListAPIView):
 
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = ( IsAuthenticated, IsModer | IsOwner)
+    permission_classes = (IsAuthenticated, IsModer | IsOwner)
+
 
 class LessonRetrieveAPIView(RetrieveAPIView):
     """Передаёт представление определённого объекта класса 'Урок'"""
@@ -67,12 +68,17 @@ class LessonRetrieveAPIView(RetrieveAPIView):
     serializer_class = LessonSerializer
     permission_classes = (IsAuthenticated, IsModer | IsOwner)
 
+
 class LessonUpdateAPIView(UpdateAPIView):
     """Меняет информацию в представлении объекта класса 'Урок'"""
 
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = (IsAuthenticated, IsModer | IsOwner,)
+    permission_classes = (
+        IsAuthenticated,
+        IsModer | IsOwner,
+    )
+
 
 class LessonDestroyAPIView(DestroyAPIView):
     """Удаляет объект класса 'Урок'"""

@@ -9,7 +9,6 @@ from rest_framework.viewsets import ModelViewSet
 from users.models import Payment, User
 from users.serializer import PaymentSerializer, UserSerializer
 
-
 # class UserViewSet(ModelViewSet):
 #     """Создаёт CRUD для объекта класса 'Пользователь'"""
 #
