@@ -19,12 +19,16 @@ class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+class UserCreateAPIView(CreateAPIView):
+    """ Контроллер для регистрации пользователей """
 
-# class PaymentViewSet(ModelViewSet):
-#     """Создаёт CRUD для объекта класса 'Платеж'"""
-#
-#     queryset = Payment.objects.all()
-#     serializer_class = PaymentSerializer
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+
+    def perform_create(self, serializer):
+        user = serializer.save(is_active=True)
+        user.set_password(user.password)
+        user.save()
 
 
 class PaymentCreateAPIView(CreateAPIView):
