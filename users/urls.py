@@ -2,9 +2,14 @@ from django.urls import path
 from rest_framework.routers import SimpleRouter
 
 from users.apps import UsersConfig
-from users.views import (PaymentCreateAPIView, PaymentDestroyAPIView,
-                         PaymentListAPIView, PaymentRetrieveAPIView,
-                         PaymentUpdateAPIView, UserViewSet)
+from users.views import (
+    PaymentCreateAPIView,
+    PaymentDestroyAPIView,
+    PaymentListAPIView,
+    PaymentRetrieveAPIView,
+    PaymentUpdateAPIView,
+    UserViewSet,
+)
 
 app_name = UsersConfig.name
 

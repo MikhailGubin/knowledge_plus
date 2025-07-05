@@ -79,8 +79,11 @@ class Payment(models.Model):
         blank=True,
         null=True,
     )
-    amount = models.FloatField(
-        verbose_name="Сумма оплаты", help_text="Укажите сумму оплаты"
+    amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name="Сумма оплаты",
+        help_text="Укажите сумму оплаты",
     )
     payment_method = models.CharField(
         max_length=20,

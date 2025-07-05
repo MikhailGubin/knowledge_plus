@@ -8,7 +8,7 @@ class UserSerializer(ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("email", "avatar", "phone", "city")
+        fields = ("id", "email", "avatar", "phone", "city")
 
 
 class PaymentSerializer(ModelSerializer):
