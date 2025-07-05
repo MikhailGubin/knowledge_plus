@@ -19,12 +19,24 @@ class CourseViewSet(ModelViewSet):
     #         return CourseDetailSerializer
     #     return CourseSerializer
 
+    def perform_create(self, serializer):
+        """ Добавляет текущего пользователя в поле "Владелец" модели "Курс" """
+        course = serializer.save()
+        course.owner = self.request.user
+        course.save()
+
 
 class LessonCreateAPIView(CreateAPIView):
     """Создаёт объект класса 'Урок'"""
 
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+
+    def perform_create(self, serializer):
+        """ Добавляет текущего пользователя в поле "Владелец" модели "Урок" """
+        lesson = serializer.save()
+        lesson.owner = self.request.user
+        lesson.save()
 
 
 class LessonListAPIView(ListAPIView):
