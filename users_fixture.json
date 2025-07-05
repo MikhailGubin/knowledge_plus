@@ -1,0 +1,42 @@
+[
+{
+    "model": "users.user",
+    "pk": 2,
+    "fields": {
+        "password": "",
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "",
+        "last_name": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-06-29T13:06:52.626Z",
+        "email": "client@example.com",
+        "avatar": "",
+        "phone": "8-700-777-77-77",
+        "city": "Saint Petersburg",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "users.user",
+    "pk": 3,
+    "fields": {
+        "password": "",
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "",
+        "last_name": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-06-29T13:08:27.299Z",
+        "email": "user@example.com",
+        "avatar": "",
+        "phone": "8-700-777-77-77",
+        "city": "Saint Petersburg",
+        "groups": [],
+        "user_permissions": []
+    }
+}
+]

@@ -17,6 +17,12 @@ class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
 
+    # def get_serializer_class(self):
+    #     """Выбирает нужный сериализотор при работе с объектами 'Курс'"""
+    #     if self.action == "retrieve":
+    #         return CourseDetailSerializer
+    #     return CourseSerializer
+
 
 class LessonCreateAPIView(CreateAPIView):
     """Создаёт объект класса 'Урок'"""
