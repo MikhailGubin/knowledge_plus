@@ -5,6 +5,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from materials.models import Course, Lesson
 from materials.serializer import CourseSerializer, LessonSerializer
+from users.permissions import IsModer
 
 
 class CourseViewSet(ModelViewSet):
@@ -24,6 +25,15 @@ class CourseViewSet(ModelViewSet):
         course = serializer.save()
         course.owner = self.request.user
         course.save()
+
+    def get_permissions(self):
+        """ Устанавливает права доступа для пользователя при работе с объектами "Курс" """
+
+        if self.action in ["create", "destroy"]:
+            self.permission_classes = (~IsModer,)
+        elif self.action in ["update", "retrieve"]:
+            self.permission_classes = (IsModer,)
+        return super().get_permissions()
 
 
 class LessonCreateAPIView(CreateAPIView):
