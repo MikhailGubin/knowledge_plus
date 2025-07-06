@@ -1,6 +1,10 @@
-from rest_framework.generics import (CreateAPIView, DestroyAPIView,
-                                     ListAPIView, RetrieveAPIView,
-                                     UpdateAPIView)
+from rest_framework.generics import (
+    CreateAPIView,
+    DestroyAPIView,
+    ListAPIView,
+    RetrieveAPIView,
+    UpdateAPIView,
+)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
@@ -22,13 +26,12 @@ class CourseViewSet(ModelViewSet):
         course.save()
 
     def get_queryset(self):
-        """ Фильтрует queryset в зависимости от пользователя """
+        """Фильтрует queryset в зависимости от пользователя"""
         user = self.request.user
         if user.groups.filter(name="moders").exists():
             return Course.objects.all()
         else:
             return Course.objects.filter(owner=user)
-
 
     def get_permissions(self):
         """Устанавливает права доступа для пользователя при работе с объектами "Курс" """
@@ -67,6 +70,7 @@ class LessonListAPIView(ListAPIView):
         if self.request.user.groups.filter(name="moders").exists():
             return Lesson.objects.all()
         return Lesson.objects.filter(owner=self.request.user)
+
 
 class LessonRetrieveAPIView(RetrieveAPIView):
     """Передаёт представление определённого объекта класса 'Урок'"""
