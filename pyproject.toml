@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "knowledge-plus"
+name = "knowledge_plus"
 version = "0.1.0"
 description = ""
 authors = ["Mikhail Gubin <mgubin82@gmail.com>"]
