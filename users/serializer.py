@@ -17,11 +17,3 @@ class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = "__all__"
-
-
-# class SubscriptionSerializer(serializers.ModelSerializer):
-#     """Сериализатор для реализации CRUD операций для платежа"""
-#
-#     class Meta:
-#         model = Subscription
-#         fields = "__all__"

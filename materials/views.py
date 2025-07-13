@@ -1,24 +1,18 @@
-from rest_framework.generics import (
-    CreateAPIView,
-    DestroyAPIView,
-    ListAPIView,
-    RetrieveAPIView,
-    UpdateAPIView,
-)
+from django.shortcuts import get_object_or_404
+from rest_framework import serializers, status
+from rest_framework.decorators import action
+from rest_framework.generics import (CreateAPIView, DestroyAPIView,
+                                     ListAPIView, RetrieveAPIView,
+                                     UpdateAPIView)
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework import serializers
 
 from materials.models import Course, Lesson
 from materials.pagination import CustomPagination
 from materials.serializer import CourseSerializer, LessonSerializer
 from users.models import Subscription
 from users.permissions import IsModer, IsOwner
-
-from rest_framework import status
-from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
-from rest_framework.decorators import action
 
 
 class CourseViewSet(ModelViewSet):
@@ -115,7 +109,6 @@ class LessonListAPIView(ListAPIView):
 
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    # permission_classes = (IsAuthenticated, IsModer | IsOwner)
     pagination_class = CustomPagination
 
     def get_queryset(self):

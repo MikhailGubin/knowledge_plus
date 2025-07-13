@@ -4,8 +4,6 @@ from materials.models import Course, Lesson
 from materials.validators import validate_url
 from users.models import Subscription
 
-# from users.serializer import SubscriptionSerializer
-
 
 class LessonSerializer(serializers.ModelSerializer):
     """Сериализатор для реализации CRUD операций для урока"""
@@ -22,25 +20,11 @@ class CourseSerializer(serializers.ModelSerializer):
 
     lessons = LessonSerializer(many=True, read_only=True, source="lesson_set")
     lessons_count = serializers.SerializerMethodField()
-    # subscription = SubscriptionSerializer(read_only=True)
     sign_up = serializers.SerializerMethodField()
 
     def get_lessons_count(self, course):
         """Считает количество уроков в курсе"""
         return Lesson.objects.filter(course=course.id).count()
-
-    # def get_is_subscribed(self, obj):
-    #     """
-    #     Метод для определения, подписан ли текущий пользователь на данный курс.
-    #     `obj` здесь - это экземпляр Course.
-    #     """
-    #     request = self.context.get('request')  # Получаем объект request из контекста сериализатора
-    #
-    #     # Проверяем, авторизован ли пользователь и есть ли объект request
-    #     if request and request.user.is_authenticated:
-    #         # Проверяем, существует ли подписка для текущего пользователя и данного курса
-    #         return Subscription.objects.filter(user=request.user, course=obj).exists()
-    #     return False  # Если пользователь не авторизован, считаем, что он не подписан
 
     def get_sign_up(self, instance):
         """Метод для определения, подписан ли текущий пользователь на данный курс"""
