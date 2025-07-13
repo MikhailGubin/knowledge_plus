@@ -60,11 +60,11 @@ urlpatterns = [
         TokenRefreshView.as_view(permission_classes=(AllowAny,)),
         name="token_refresh",
     ),
-# path(
-#         "subscribe",
-#         SubscriptionCreateAPIView.as_view(permission_classes=(AllowAny,)),
-#         name="subscribe",
-#     )
+    # path(
+    #         "subscribe",
+    #         SubscriptionCreateAPIView.as_view(permission_classes=(AllowAny,)),
+    #         name="subscribe",
+    #     )
 ]
 
 # urlpatterns += router.urls

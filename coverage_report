@@ -1,0 +1,54 @@
+Coverage report from console:
+
+(knowledge-plus-py3.13) PS C:\SkyPro\Homeworks\knowledge_plus> coverage report
+<unknown>:12: SyntaxWarning: invalid escape sequence '\.'
+C:\SkyPro\homeworks\knowledge_plus\materials\validators.py:12: SyntaxWarning: invalid escape sequence '\.'
+  reg = re.compile("^(https?://)?(www\.)?youtube\.com/.+$")
+Name                                                                               Stmts   Miss  Cover
+------------------------------------------------------------------------------------------------------
+config\__init__.py                                                                     0      0   100%
+config\asgi.py                                                                         4      4     0%
+config\settings.py                                                                    27      0   100%
+config\urls.py                                                                         3      0   100%
+config\wsgi.py                                                                         4      4     0%
+manage.py                                                                             11      2    82%
+materials\__init__.py                                                                  0      0   100%
+materials\admin.py                                                                     0      0   100%
+materials\apps.py                                                                      4      0   100%
+materials\migrations\0001_initial.py                                                   6      0   100%
+materials\migrations\0002_alter_lesson_link_video.py                                   4      0   100%
+materials\migrations\0003_course_owner_lesson_owner.py                                 6      0   100%
+materials\migrations\__init__.py                                                       0      0   100%
+materials\models.py                                                                   23      2    91%
+materials\pagination.py                                                                5      0   100%
+materials\serializer.py                                                               25      7    72%
+materials\tests.py                                                                    65      0   100%
+materials\urls.py                                                                      9      0   100%
+materials\validators.py                                                                9      1    89%
+materials\views.py                                                                    80     11    86%
+users\__init__.py                                                                      0      0   100%
+users\admin.py                                                                         5      0   100%
+users\apps.py                                                                          4      0   100%
+users\management\__init__.py                                                           0      0   100%
+users\management\commands\__init__.py                                                  0      0   100%
+users\management\commands\csu.py                                                      10     10     0%
+users\migrations\0001_initial.py                                                       7      0   100%
+users\migrations\0002_payment.py                                                       6      0   100%
+users\migrations\0003_alter_payment_payment_method.py                                  4      0   100%
+users\migrations\0004_alter_payment_payment_date.py                                    4      0   100%
+users\migrations\0005_alter_payment_amount.py                                          4      0   100%
+users\migrations\0006_alter_payment_amount.py                                          4      0   100%
+users\migrations\0007_alter_payment_amount.py                                          4      0   100%
+users\migrations\0008_alter_payment_amount.py                                          4      0   100%
+users\migrations\0009_subscription.py                                                  6      0   100%
+users\migrations\0010_rename_subscription_course_subscription_course_and_more.py       4      0   100%
+users\migrations\0011_alter_subscription_course_alter_subscription_user.py             6      0   100%
+users\migrations\__init__.py                                                           0      0   100%
+users\models.py                                                                       38      3    92%
+users\permissions.py                                                                   8      0   100%
+users\serializer.py                                                                   10      0   100%
+users\tests.py                                                                         0      0   100%
+users\urls.py                                                                          8      0   100%
+users\views.py                                                                        47      4    91%
+------------------------------------------------------------------------------------------------------
+TOTAL                                                                                468     48    90%

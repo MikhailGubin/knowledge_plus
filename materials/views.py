@@ -28,7 +28,6 @@ class CourseViewSet(ModelViewSet):
     serializer_class = CourseSerializer
     pagination_class = CustomPagination
 
-
     def perform_create(self, serializer):
         """Добавляет текущего пользователя в поле "Владелец" модели "Курс" """
         course = serializer.save()
@@ -54,16 +53,14 @@ class CourseViewSet(ModelViewSet):
             self.permission_classes = [IsOwner]
         return super().get_permissions()
 
-
     def get_serializer_context(self):
         """
         Переопределяем метод для передачи объекта request в контекст сериализатора.
         Это необходимо для работы SerializerMethodField `is_subscribed`.
         """
-        return {'request': self.request}
+        return {"request": self.request}
 
-
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=["post"])
     def toggle_subscription(self, request, pk=None):
         """
         Переключает статус подписки текущего пользователя на данный курс.
@@ -71,28 +68,29 @@ class CourseViewSet(ModelViewSet):
         URL для проверки: http://127.0.0.1:8000/materials/4/toggle_subscription/
         """
         user = request.user  # Получаем текущего авторизованного пользователя
-        print(f"DEBUG: User in toggle_subscription: {request.user}")
         # Получаем объект курса по pk из URL
         # self.get_object() удобен, так как он уже обрабатывает 404 и permissions
         course_item = self.get_object()
-        print(course_item)
         # Проверяем, существует ли подписка для данного пользователя и курса
         subs_item_queryset = Subscription.objects.filter(user=user, course=course_item)
 
         # Если подписка у пользователя на этот курс есть - удаляем ее
         if subs_item_queryset.exists():
             subs_item_queryset.delete()
-            message = 'Подписка успешно удалена.'
+            message = "Подписка успешно удалена."
             status_code = status.HTTP_200_OK
         # Если подписки у пользователя на этот курс нет - создаем ее
         else:
             try:
                 Subscription.objects.create(user=user, course=course_item)
-                message = 'Подписка успешно добавлена.'
+                message = "Подписка успешно добавлена."
                 status_code = status.HTTP_201_CREATED
             except Exception as e:
                 # В случае возникновения ошибки (например, если unique_together каким-то образом сработает)
-                return Response({"detail": f"Ошибка при добавлении подписки: {e}"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"detail": f"Ошибка при добавлении подписки: {e}"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
         # Возвращаем ответ в API
         return Response({"message": message}, status=status_code)
@@ -119,7 +117,7 @@ class LessonListAPIView(ListAPIView):
     serializer_class = LessonSerializer
     # permission_classes = (IsAuthenticated, IsModer | IsOwner)
     pagination_class = CustomPagination
-    
+
     def get_queryset(self):
         if self.request.user.groups.filter(name="moders").exists():
             return Lesson.objects.all()

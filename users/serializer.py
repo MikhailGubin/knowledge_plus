@@ -18,6 +18,7 @@ class PaymentSerializer(serializers.ModelSerializer):
         model = Payment
         fields = "__all__"
 
+
 # class SubscriptionSerializer(serializers.ModelSerializer):
 #     """Сериализатор для реализации CRUD операций для платежа"""
 #

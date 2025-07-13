@@ -108,14 +108,14 @@ class Subscription(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Пользователь",
         help_text="Укажите пользователя",
-        related_name='subscriptions'
+        related_name="subscriptions",
     )
     course = models.ForeignKey(
         Course,
         on_delete=models.CASCADE,
         verbose_name="Курс",
         help_text="Укажите курс, на который подписан Пользователь",
-        related_name='subscriptions'
+        related_name="subscriptions",
     )
 
     class Meta:

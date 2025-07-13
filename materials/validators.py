@@ -3,11 +3,14 @@ import re
 
 forbidden_words = []
 
+
 def validate_url(value):
-    """ Валидатор проверяющий поле ссылки на видео."""
+    """Валидатор проверяющий поле ссылки на видео."""
 
     print(value)
     if value:
-        reg = re.compile('^(https?://)?(www\.)?youtube\.com/.+$')
+        reg = re.compile("^(https?://)?(www\.)?youtube\.com/.+$")
         if not bool(reg.match(value)):
-            raise ValidationError('Использована запрещённая ссылка. Разрешены только ссылки на youtube.com.')
+            raise ValidationError(
+                "Использована запрещённая ссылка. Разрешены только ссылки на youtube.com."
+            )

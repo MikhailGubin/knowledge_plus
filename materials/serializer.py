@@ -3,11 +3,13 @@ from rest_framework import serializers
 from materials.models import Course, Lesson
 from materials.validators import validate_url
 from users.models import Subscription
+
 # from users.serializer import SubscriptionSerializer
 
 
 class LessonSerializer(serializers.ModelSerializer):
     """Сериализатор для реализации CRUD операций для урока"""
+
     link_video = serializers.URLField(validators=[validate_url])
 
     class Meta:
@@ -27,7 +29,6 @@ class CourseSerializer(serializers.ModelSerializer):
         """Считает количество уроков в курсе"""
         return Lesson.objects.filter(course=course.id).count()
 
-
     # def get_is_subscribed(self, obj):
     #     """
     #     Метод для определения, подписан ли текущий пользователь на данный курс.
@@ -42,12 +43,18 @@ class CourseSerializer(serializers.ModelSerializer):
     #     return False  # Если пользователь не авторизован, считаем, что он не подписан
 
     def get_sign_up(self, instance):
-        """ Метод для определения, подписан ли текущий пользователь на данный курс """
-        request = self.context.get('request')
+        """Метод для определения, подписан ли текущий пользователь на данный курс"""
+        request = self.context.get("request")
         print(f"DEBUG: Request in get_is_subscribed: {request}")
-        print(f"DEBUG: User in get_is_subscribed: {request.user if request else 'No request'}")
+        print(
+            f"DEBUG: User in get_is_subscribed: {request.user if request else 'No request'}"
+        )
         if request and request.user.is_authenticated:
-            return Subscription.objects.filter(user=request.user).filter(course=instance).exists()
+            return (
+                Subscription.objects.filter(user=request.user)
+                .filter(course=instance)
+                .exists()
+            )
         return False
 
     class Meta:
@@ -62,4 +69,3 @@ class CourseSerializer(serializers.ModelSerializer):
             "lessons_count",
             "lessons",
         )
-
