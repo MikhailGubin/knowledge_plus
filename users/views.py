@@ -1,20 +1,18 @@
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
+from rest_framework import filters, status
 from rest_framework.generics import (CreateAPIView, DestroyAPIView,
                                      ListAPIView, RetrieveAPIView,
                                      UpdateAPIView)
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 
 from materials.models import Course
 from users.models import Payment, Subscription, User
-from users.serializer import PaymentSerializer, UserSerializer
-
-# from rest_framework.views import APIView
-# from rest_framework import status
-# from rest_framework.response import Response
-# from django.shortcuts import get_object_or_404
-# from rest_framework.viewsets import ModelViewSet
-
+from users.serializer import (PaymentSerializer, SubscriptionSerializer,
+                              UserSerializer)
 
 
 class UserCreateAPIView(CreateAPIView):
@@ -103,3 +101,74 @@ class PaymentDestroyAPIView(DestroyAPIView):
 
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
+
+
+# class SubscriptionCreateAPIView(CreateAPIView):
+#     """ Эндпоинт для создания и удаления объекта класса 'Подписка' """
+#
+#     queryset = Subscription.objects.all()
+#     serializer_class = SubscriptionSerializer
+#
+#     def post(self, *args, **kwargs):
+#         user = self.request.user
+#         course_id = self.request.data['id']
+#         course_item = get_object_or_404(Course, id=course_id)
+#         subs_item = Subscription.objects.filter(user=user, course=course_item)
+#         if subs_item.exists():
+#             subs_item.delete()
+#             message = 'Подписка удалена'
+#         else:
+#             Subscription.objects.create(user=user, course=course_item)
+#             message = 'Подписка добавлена'
+#         return Response({"message": message})
+
+
+class SubscriptionToggleAPIView(APIView):
+    """Эндпоинт для создания и удаления объекта класса 'Подписка'"""
+
+    queryset = Subscription.objects.all()
+    serializer_class = SubscriptionSerializer
+
+    def post(self, request, *args, **kwargs):
+        # Получаем текущего авторизованного пользователя
+        user = request.user
+        # Получаем ID курса из тела запроса
+        course_id = request.data.get("course_id")
+
+        # Проверяем, был ли предоставлен course_id
+        if not course_id:
+            return Response(
+                {"detail": "Поле 'course_id' обязательно."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Пытаемся получить объект курса, или возвращаем 404, если не найден
+        course_item = get_object_or_404(Course, id=course_id)
+
+        # Проверяем, существует ли подписка для данного пользователя и курса
+        subs_item_queryset = Subscription.objects.filter(user=user, course=course_item)
+
+        # Если подписка у пользователя на этот курс есть - удаляем ее
+        if subs_item_queryset.exists():
+            subs_item_queryset.delete()
+            message = "Подписка успешно удалена."
+            status_code = (
+                status.HTTP_200_OK
+            )  # 200 OK, так как действие выполнено успешно
+        # Если подписки у пользователя на этот курс нет - создаем ее
+        else:
+            try:
+                Subscription.objects.create(user=user, course=course_item)
+                message = "Подписка успешно добавлена."
+                status_code = (
+                    status.HTTP_201_CREATED
+                )  # 201 Created, так как ресурс создан
+            except Exception as e:
+                # В случае возникновения ошибки (например, если unique_together каким-то образом сработает)
+                return Response(
+                    {"detail": f"Ошибка при добавлении подписки: {e}"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        # Возвращаем ответ в API
+        return Response({"message": message}, status=status_code)

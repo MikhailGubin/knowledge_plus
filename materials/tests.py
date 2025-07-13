@@ -83,33 +83,3 @@ class LessonTestCase(APITestCase):
         }
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(data, result)
-
-
-class SubscriptionTestCase(APITestCase):
-    def setUp(self):
-        """Создает базовый набор параметров для тестов для модели "Subscription" """
-        self.user = User.objects.create(email="admin@example.com")
-        self.user.set_password("12345")
-        self.user.save()
-        self.course = Course.objects.create(
-            name="Профессия Python-разработчик", owner=self.user
-        )
-        self.client.force_authenticate(user=self.user)
-
-    def test_subscription_create(self):
-        """Проверяет процесс создания одного объекта класса "Subscription" """
-        url = f"http://127.0.0.1:8000/materials/{self.course.pk}/toggle_subscription/"
-        response = self.client.post(url)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.json(), {"message": "Подписка успешно добавлена."})
-        self.assertEqual(Subscription.objects.all().count(), 1)
-
-    def test_subscription_delete(self):
-        """Проверяет процесс удаления одного объекта класса "Subscription" """
-        url = f"http://127.0.0.1:8000/materials/{self.course.pk}/toggle_subscription/"
-        self.client.post(url)
-        url = f"http://127.0.0.1:8000/materials/{self.course.pk}/toggle_subscription/"
-        response = self.client.post(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json(), {"message": "Подписка успешно удалена."})
-        self.assertEqual(Subscription.objects.all().count(), 0)
