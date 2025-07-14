@@ -20,10 +20,8 @@ class SubscriptionTestCase(APITestCase):
     def test_subscription_create_delete(self):
         """Проверяет процесс создания и удаления подписки Пользователя на курс"""
         url = reverse("users:subscribe", args=[self.course.pk])
-        print(url)
         data = {"course_id": self.course.pk}
         response = self.client.post(url, data, format="json")
-        print(response.json())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.json(), {"message": "Подписка успешно добавлена."})
         self.assertEqual(Subscription.objects.all().count(), 1)

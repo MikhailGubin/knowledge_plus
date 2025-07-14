@@ -1,21 +1,20 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
-from rest_framework.generics import (
-    CreateAPIView,
-    DestroyAPIView,
-    ListAPIView,
-    RetrieveAPIView,
-    UpdateAPIView,
-)
+from rest_framework.generics import (CreateAPIView, DestroyAPIView,
+                                     ListAPIView, RetrieveAPIView,
+                                     UpdateAPIView)
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from materials.models import Course
-from users.models import Payment, Subscription, User
-from users.serializer import PaymentSerializer, SubscriptionSerializer, UserSerializer
+from users.models import CoursePayment, Payment, Subscription, User
+from users.serializer import (CoursePaymentSerializer, PaymentSerializer,
+                              SubscriptionSerializer, UserSerializer)
+from users.services import (create_stripe_price, create_stripe_product,
+                            create_stripe_session)
 
 
 class UserCreateAPIView(CreateAPIView):
@@ -106,26 +105,6 @@ class PaymentDestroyAPIView(DestroyAPIView):
     serializer_class = PaymentSerializer
 
 
-# class SubscriptionCreateAPIView(CreateAPIView):
-#     """ Эндпоинт для создания и удаления объекта класса 'Подписка' """
-#
-#     queryset = Subscription.objects.all()
-#     serializer_class = SubscriptionSerializer
-#
-#     def post(self, *args, **kwargs):
-#         user = self.request.user
-#         course_id = self.request.data['id']
-#         course_item = get_object_or_404(Course, id=course_id)
-#         subs_item = Subscription.objects.filter(user=user, course=course_item)
-#         if subs_item.exists():
-#             subs_item.delete()
-#             message = 'Подписка удалена'
-#         else:
-#             Subscription.objects.create(user=user, course=course_item)
-#             message = 'Подписка добавлена'
-#         return Response({"message": message})
-
-
 class SubscriptionToggleAPIView(APIView):
     """Эндпоинт для создания и удаления объекта класса 'Подписка'"""
 
@@ -175,3 +154,22 @@ class SubscriptionToggleAPIView(APIView):
 
         # Возвращаем ответ в API
         return Response({"message": message}, status=status_code)
+
+
+class CoursePaymentCreateAPIView(CreateAPIView):
+    """Создает объект класса 'Оплата курса'"""
+
+    queryset = CoursePayment.objects.all()
+    serializer_class = CoursePaymentSerializer
+
+    def perform_create(self, serializer):
+        course_payment = serializer.save(user=self.request.user)
+        amount = course_payment.amount
+        # course = Course.objects.get(pk=course_payment.paid_course)
+        course = course_payment.paid_course
+        product_id = create_stripe_product(course)
+        price = create_stripe_price(amount, course, product_id)
+        session_id, payment_link = create_stripe_session(price)
+        course_payment.session_id = session_id
+        course_payment.link = payment_link
+        course_payment.save()

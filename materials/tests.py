@@ -34,11 +34,9 @@ class LessonTestCase(APITestCase):
         data = {
             "name": "Вьюсеты и дженерики",
             "course": self.course.pk,
-            "owner": self.user.pk,
             "link_video": "https://www.youtube.com/watch?v=LDU_Txk06tM&list=RDLDU_Txk06tM&start_radio=1",
         }
         response = self.client.post(url, data, format="json")
-
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Lesson.objects.all().count(), 2)
 

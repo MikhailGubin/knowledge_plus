@@ -1,15 +1,7 @@
-from django.shortcuts import get_object_or_404
-from rest_framework import serializers, status
-from rest_framework.decorators import action
-from rest_framework.generics import (
-    CreateAPIView,
-    DestroyAPIView,
-    ListAPIView,
-    RetrieveAPIView,
-    UpdateAPIView,
-)
+from rest_framework.generics import (CreateAPIView, DestroyAPIView,
+                                     ListAPIView, RetrieveAPIView,
+                                     UpdateAPIView)
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from materials.models import Course, Lesson
@@ -28,17 +20,17 @@ class CourseViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         """Добавляет текущего пользователя в поле "Владелец" модели "Курс" """
-        course = serializer.save()
-        course.owner = self.request.user
-        course.save()
+        serializer.save(owner=self.request.user)
 
     def get_queryset(self):
         """Фильтрует queryset в зависимости от пользователя"""
         user = self.request.user
         if user.groups.filter(name="moders").exists():
             return Course.objects.all()
-        else:
+        elif user.is_authenticated:
             return Course.objects.filter(owner=user)
+        else:
+            return Course.objects.none()
 
     def get_permissions(self):
         """Устанавливает права доступа для пользователя при работе с объектами "Курс" """
@@ -103,9 +95,7 @@ class LessonCreateAPIView(CreateAPIView):
 
     def perform_create(self, serializer):
         """Добавляет текущего пользователя в поле "Владелец" модели "Урок" """
-        lesson = serializer.save()
-        lesson.owner = self.request.user
-        lesson.save()
+        serializer.save(owner=self.request.user)
 
 
 class LessonListAPIView(ListAPIView):
@@ -116,9 +106,13 @@ class LessonListAPIView(ListAPIView):
     pagination_class = CustomPagination
 
     def get_queryset(self):
-        if self.request.user.groups.filter(name="moders").exists():
+        user = self.request.user
+        if user.groups.filter(name="moders").exists():
             return Lesson.objects.all()
-        return Lesson.objects.filter(owner=self.request.user)
+        elif user.is_authenticated:
+            return Lesson.objects.filter(owner=user)
+        else:
+            return Lesson.objects.none()
 
 
 class LessonRetrieveAPIView(RetrieveAPIView):
