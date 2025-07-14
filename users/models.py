@@ -92,6 +92,7 @@ class Payment(models.Model):
         null=True,
     )
 
+
     def __str__(self):
         return f"Платеж от пользователя {self.user} на сумму {self.amount } руб. Дата и время: {self.payment_date}"
 

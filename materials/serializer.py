@@ -8,7 +8,7 @@ from users.models import Subscription
 class LessonSerializer(serializers.ModelSerializer):
     """Сериализатор для реализации CRUD операций для урока"""
 
-    link_video = serializers.URLField(validators=[validate_url])
+    link_video = serializers.URLField(validators=[validate_url], required=False)
 
     class Meta:
         model = Lesson
@@ -26,7 +26,7 @@ class CourseSerializer(serializers.ModelSerializer):
         """Считает количество уроков в курсе"""
         return Lesson.objects.filter(course=course.id).count()
 
-    def get_sign_up(self, instance):
+    def get_sign_up(self, instance) -> bool:
         """Метод для определения, подписан ли текущий пользователь на данный курс"""
         request = self.context.get("request")
         print(f"DEBUG: Request in get_is_subscribed: {request}")
