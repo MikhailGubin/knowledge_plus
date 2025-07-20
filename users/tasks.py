@@ -24,8 +24,6 @@ def send_email_updated_course(email, title):
 def block_inactive_users():
     """Блокирует Пользователей, которые не заходил на сайт более 1 месяца"""
 
-    # User = get_user_model()
-
     # Вычисляем дату, которая была месяц назад от текущего момента
     one_month_ago = timezone.now() - timedelta(days=30)
 
@@ -38,6 +36,6 @@ def block_inactive_users():
     num_blocked_users = inactive_users_queryset.update(is_active=False)
 
     if num_blocked_users > 0:
-        print(f"Успешно заблокировано {num_blocked_users} неактивных Пользователей.")
+        print(f"Успешно заблокированы {num_blocked_users} неактивных Пользователей.")
     else:
         print("Пользователей для блокировки не найдено.")
