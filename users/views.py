@@ -15,6 +15,7 @@ from users.serializer import (CoursePaymentSerializer, PaymentSerializer,
                               SubscriptionSerializer, UserSerializer)
 from users.services import (create_stripe_price, create_stripe_product,
                             create_stripe_session)
+from users.tasks import send_email
 
 
 class UserCreateAPIView(CreateAPIView):
@@ -127,6 +128,7 @@ class SubscriptionToggleAPIView(APIView):
         # Пытаемся получить объект курса, или возвращаем 404, если не найден
         course_item = get_object_or_404(Course, id=course_id)
 
+
         # Проверяем, существует ли подписка для данного пользователя и курса
         subs_item_queryset = Subscription.objects.filter(user=user, course=course_item)
 
@@ -134,6 +136,7 @@ class SubscriptionToggleAPIView(APIView):
         if subs_item_queryset.exists():
             subs_item_queryset.delete()
             message = "Подписка успешно удалена."
+            send_email.delay()
             status_code = (
                 status.HTTP_200_OK
             )  # 200 OK, так как действие выполнено успешно
