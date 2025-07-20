@@ -127,7 +127,6 @@ class SubscriptionToggleAPIView(APIView):
         # Пытаемся получить объект курса, или возвращаем 404, если не найден
         course_item = get_object_or_404(Course, id=course_id)
 
-
         # Проверяем, существует ли подписка для данного пользователя и курса
         subs_item_queryset = Subscription.objects.filter(user=user, course=course_item)
 

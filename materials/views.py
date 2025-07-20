@@ -24,12 +24,13 @@ class CourseViewSet(ModelViewSet):
         serializer.save(owner=self.request.user)
 
     def perform_update(self, serializer):
-
+        """Реализует отправку пользователям сообщения об обновлении материалов курса"""
         # 1. Получаем только ID курса
-        course_instance = self.get_object()  # Получаем текущий объект курса до обновления
+        course_instance = (
+            self.get_object()
+        )  # Получаем текущий объект курса до обновления
 
         # 2. Выполняем сохранение обновленных данных
-        # Это обновит объект курса в базе данных
         serializer.save()
 
         # 3. После успешного обновления, получаем всех подписчиков этого курса
@@ -38,7 +39,9 @@ class CourseViewSet(ModelViewSet):
         # 4. Для каждого подписчика отправляем Celery-задачу
         for subscription in subscriptions:
             user_email = subscription.user.email
-            course_title = course_instance.name  # Используем обновленное название курса, если оно изменилось
+            course_title = (
+                course_instance.name
+            )  # Используем обновленное название курса, если оно изменилось
 
             # Вызываем асинхронную задачу send_email_updated_course
             send_email_updated_course.delay(user_email, course_title)
