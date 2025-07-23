@@ -9,6 +9,7 @@ from materials.pagination import CustomPagination
 from materials.serializer import CourseSerializer, LessonSerializer
 from users.models import Subscription
 from users.permissions import IsModer, IsOwner
+from users.tasks import send_email_updated_course
 
 
 class CourseViewSet(ModelViewSet):
@@ -21,6 +22,29 @@ class CourseViewSet(ModelViewSet):
     def perform_create(self, serializer):
         """Добавляет текущего пользователя в поле "Владелец" модели "Курс" """
         serializer.save(owner=self.request.user)
+
+    def perform_update(self, serializer):
+        """Реализует отправку пользователям сообщения об обновлении материалов курса"""
+        # 1. Получаем только ID курса
+        course_instance = (
+            self.get_object()
+        )  # Получаем текущий объект курса до обновления
+
+        # 2. Выполняем сохранение обновленных данных
+        serializer.save()
+
+        # 3. После успешного обновления, получаем всех подписчиков этого курса
+        subscriptions = Subscription.objects.filter(course=course_instance)
+
+        # 4. Для каждого подписчика отправляем Celery-задачу
+        for subscription in subscriptions:
+            user_email = subscription.user.email
+            course_title = (
+                course_instance.name
+            )  # Используем обновленное название курса, если оно изменилось
+
+            # Вызываем асинхронную задачу send_email_updated_course
+            send_email_updated_course.delay(user_email, course_title)
 
     def get_queryset(self):
         """Фильтрует queryset в зависимости от пользователя"""
