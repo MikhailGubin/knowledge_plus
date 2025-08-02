@@ -29,10 +29,7 @@ class CourseSerializer(serializers.ModelSerializer):
     def get_sign_up(self, instance) -> bool:
         """Метод для определения, подписан ли текущий пользователь на данный курс"""
         request = self.context.get("request")
-        print(f"DEBUG: Request in get_is_subscribed: {request}")
-        print(
-            f"DEBUG: User in get_is_subscribed: {request.user if request else 'No request'}"
-        )
+
         if request and request.user.is_authenticated:
             return (
                 Subscription.objects.filter(user=request.user)
