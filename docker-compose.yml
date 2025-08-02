@@ -1,10 +1,10 @@
-
+version: '3.9'
 
 services:
   web:
     build: .
-    command: >	    
-      bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: >
+      bash -c  "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     environment:
       - DEBUG=True
       - DATABASE_HOST=db
@@ -26,11 +26,11 @@ services:
       - "5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-#    healthcheck:
-#      test: [ "CMD-SHELL", "pg_isready -U POSTGRES_USER" ]
-#      interval: 30s
-#      timeout: 10s
-#      retries: 5
+    healthcheck:
+        test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+        interval: 30s
+        timeout: 10s
+        retries: 5
 
   redis:
     image: "redis:alpine"
@@ -42,8 +42,10 @@ services:
       - .:/code
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
+      - DATABASE_HOST=db
     depends_on:
       - redis
+      - db
 
   beat:
     build: .
@@ -52,8 +54,10 @@ services:
       - .:/code
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
+      - DATABASE_HOST=db
     depends_on:
       - redis
+      - db
 
 networks:
   default:
