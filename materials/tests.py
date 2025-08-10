@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from materials.models import Course, Lesson
-from users.models import Subscription, User
+from users.models import User
 
 
 class LessonTestCase(APITestCase):
