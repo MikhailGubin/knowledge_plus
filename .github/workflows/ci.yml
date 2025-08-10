@@ -51,7 +51,7 @@ jobs:
         echo "EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}" >> .env
         echo "CELERY_BROKER_URL=${{ secrets.CELERY_BROKER_URL }}" >> .env
         echo "CELERY_RESULT_BACKEND=${{ secrets.CELERY_RESULT_BACKEND }}" >> .env
-        run: echo "CELERY_RESULT_BACKEND: ${{ secrets.CELERY_RESULT_BACKEND }}" >> .env
+        
         ls -la .env
       env:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
