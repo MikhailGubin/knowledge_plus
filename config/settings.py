@@ -2,7 +2,6 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
-import stripe
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -13,8 +12,6 @@ load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = os.getenv("DATABASE_DEBUG", False) == "True"
-
-ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -108,6 +105,8 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
@@ -154,9 +153,16 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", "host.docker.internal"]
 
-CSRF_TRUSTED_ORIGINS=[
+CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1",
     "http://127.0.0.1:8000",
-
 ]
+
 CORS_ALLOWED_ORIGINS = ["*"]
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://redis:6379/1',
+    }
+}
