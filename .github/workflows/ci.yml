@@ -13,7 +13,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: "3.10"
+        python-version: "3.12"
 
     - name: Cache Poetry
       uses: actions/cache@v3
@@ -30,6 +30,27 @@ jobs:
 
     - name: Install dependencies
       run: poetry install
+
+    - name: Create .env file
+      run: |
+        echo "SECRET_KEY=${{ secrets.SECRET_KEY }}"
+        echo "DATABASE_DEBUG=${{ secrets.DATABASE_DEBUG }}"
+        echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" 
+        echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" 
+        echo "HOST=${{ secrets.HOST }}" 
+        echo "POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}" 
+        echo "POSTGRES_HOST_AUTH_METHOD=${{ secrets.POSTGRES_HOST_AUTH_METHOD }}" 
+        echo "ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}" 
+        echo "ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}" 
+        echo "EMAIL_BACKEND=${{ secrets.EMAIL_BACKEND }}" 
+        echo "EMAIL_HOST=${{ secrets.EMAIL_HOST }}"
+        echo "EMAIL_PORT=${{ secrets.EMAIL_PORT }}"
+        echo "EMAIL_USE_TLS=${{ secrets.EMAIL_USE_TLS }}"
+        echo "EMAIL_USE_SSL=${{ secrets.EMAIL_USE_SSL }}"
+        echo "EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }}"
+        echo "EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}"
+        echo "CELERY_BROKER_URL=${{ secrets.CELERY_BROKER_URL }}"
+        echo "CELERY_RESULT_BACKEND=${{ secrets.CELERY_RESULT_BACKEND }}"
 
     - name: Run migrations
       run: poetry run python manage.py migrate
