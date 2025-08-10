@@ -83,9 +83,7 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 Для запуска всех сервисов (PostgreSQL, Redis, Celery, Beat, Django Web):
 
 ```
-docker-compose up -d
-docker-compose build
-docker-compose up -d
+docker-compose up -d --build
 ```
 
 ### Проверка работоспособности

@@ -151,3 +151,12 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "host.docker.internal"]
+
+CSRF_TRUSTED_ORIGINS=[
+    "http://127.0.0.1",
+    "http://127.0.0.1:8000",
+
+]
+CORS_ALLOWED_ORIGINS = ["*"]
