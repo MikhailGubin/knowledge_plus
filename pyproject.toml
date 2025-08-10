@@ -32,8 +32,6 @@ black = "^25.1.0"
 isort = "^6.0.1"
 flake8 = "^7.3.0"
 
-[tool.poetry.packages]
-packages = [{ include = "config" }]
 
 [build-system]
 requires = ["poetry-core"]
