@@ -72,38 +72,38 @@ jobs:
         CELERY_BROKER_URL: ${{ secrets.CELERY_BROKER_URL }}
         CELERY_RESULT_BACKEND: ${{ secrets.CELERY_RESULT_BACKEND }}
 
-#    - name: Setup PostgreSQL on server
-#      run: |
-#        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-#        sudo systemctl stop postgresql || true
-#        sudo apt-get install -y postgresql postgresql-contrib
-#        sudo pg_createcluster 14 main --start
-#        sudo -u postgres psql -c "DROP USER IF EXISTS ${{ secrets.POSTGRES_USER }};"
-#        sudo -u postgres psql -c "CREATE USER ${{ secrets.POSTGRES_USER }} WITH PASSWORD '${{ secrets.POSTGRES_PASSWORD }}';"
-#        sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.POSTGRES_DB }} OWNER ${{ secrets.POSTGRES_USER }};"
-#        sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.POSTGRES_DB }} TO ${{ secrets.POSTGRES_USER }};"
-#        echo "host all all 127.0.0.1/32 md5" | sudo tee -a /etc/postgresql/*/main/pg_hba.conf
-#        sudo systemctl restart postgresql
-#        sudo -u postgres psql -c "\du"
-#        EOF
-#    - name: Check PostgreSQL status
-#      run: |
-#        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "sudo systemctl status postgresql"
-#    - name: Apply migrations on server
-#      env:
-#        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-#        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-#        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-#        HOST: ${{ secrets.HOST }}
-#        POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
-#      run: |
-#        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-#          cd ${{ secrets.DEPLOY_DIR }}
-#          poetry run python manage.py migrate
-#        EOF
+    - name: Setup PostgreSQL on server
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+        sudo systemctl stop postgresql || true
+        sudo apt-get install -y postgresql postgresql-contrib
+        sudo pg_createcluster 14 main --start
+        sudo -u postgres psql -c "DROP USER IF EXISTS ${{ secrets.POSTGRES_USER }};"
+        sudo -u postgres psql -c "CREATE USER ${{ secrets.POSTGRES_USER }} WITH PASSWORD '${{ secrets.POSTGRES_PASSWORD }}';"
+        sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.POSTGRES_DB }} OWNER ${{ secrets.POSTGRES_USER }};"
+        sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.POSTGRES_DB }} TO ${{ secrets.POSTGRES_USER }};"
+        echo "host all all 127.0.0.1/32 md5" | sudo tee -a /etc/postgresql/*/main/pg_hba.conf
+        sudo systemctl restart postgresql
+        sudo -u postgres psql -c "\du"
+        EOF
+    - name: Check PostgreSQL status
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "sudo systemctl status postgresql"
+    - name: Apply migrations on server
+      env:
+        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        HOST: ${{ secrets.HOST }}
+        POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          cd ${{ secrets.DEPLOY_DIR }}
+          poetry run python manage.py migrate
+        EOF
     
-    - name: Run migrations
-      run: poetry run python manage.py migrate
+#    - name: Run migrations
+#      run: poetry run python manage.py migrate
 
     - name: Run tests
       run: poetry run python manage.py test
