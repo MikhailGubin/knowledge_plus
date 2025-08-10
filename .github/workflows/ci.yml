@@ -33,26 +33,43 @@ jobs:
 
     - name: Create .env file
       run: |
-        echo "SECRET_KEY=${{ secrets.SECRET_KEY }}"
-        echo "DATABASE_DEBUG=${{ secrets.DATABASE_DEBUG }}"
-        echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" 
-        echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" 
-        echo "HOST=${{ secrets.HOST }}" 
-        echo "POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}" 
-        echo "POSTGRES_HOST_AUTH_METHOD=${{ secrets.POSTGRES_HOST_AUTH_METHOD }}" 
-        echo "ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}" 
-        echo "ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}" 
-        echo "EMAIL_BACKEND=${{ secrets.EMAIL_BACKEND }}" 
-        echo "EMAIL_HOST=${{ secrets.EMAIL_HOST }}"
-        echo "EMAIL_PORT=${{ secrets.EMAIL_PORT }}"
-        echo "EMAIL_USE_TLS=${{ secrets.EMAIL_USE_TLS }}"
-        echo "EMAIL_USE_SSL=${{ secrets.EMAIL_USE_SSL }}"
-        echo "EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }}"
-        echo "EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}"
-        echo "CELERY_BROKER_URL=${{ secrets.CELERY_BROKER_URL }}"
-        echo "CELERY_RESULT_BACKEND=${{ secrets.CELERY_RESULT_BACKEND }}"
-        run: echo "CELERY_RESULT_BACKEND: ${{ secrets.CELERY_RESULT_BACKEND }}"
+        echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" > .env
+        echo "DATABASE_DEBUG=${{ secrets.DATABASE_DEBUG }}" >> .env
+        echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
+        echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env 
+        echo "HOST=${{ secrets.HOST }}" >> .env
+        echo "POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}" >> .env
+        echo "POSTGRES_HOST_AUTH_METHOD=${{ secrets.POSTGRES_HOST_AUTH_METHOD }}" >> .env
+        echo "ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}" >> .env
+        echo "ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}" >> .env
+        echo "EMAIL_BACKEND=${{ secrets.EMAIL_BACKEND }}" >> .env
+        echo "EMAIL_HOST=${{ secrets.EMAIL_HOST }}" >> .env
+        echo "EMAIL_PORT=${{ secrets.EMAIL_PORT }}" >> .env
+        echo "EMAIL_USE_TLS=${{ secrets.EMAIL_USE_TLS }}" >> .env
+        echo "EMAIL_USE_SSL=${{ secrets.EMAIL_USE_SSL }}" >> .env
+        echo "EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }}" >> .env
+        echo "EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}" >> .env
+        echo "CELERY_BROKER_URL=${{ secrets.CELERY_BROKER_URL }}" >> .env
+        echo "CELERY_RESULT_BACKEND=${{ secrets.CELERY_RESULT_BACKEND }}" >> .env
+        run: echo "CELERY_RESULT_BACKEND: ${{ secrets.CELERY_RESULT_BACKEND }}" >> .env
         ls -la .env
+      env:
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        DATABASE_DEBUG: ${{ secrets.DATABASE_DEBUG }}
+        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        HOST: ${{ secrets.HOST }}
+        ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+        ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+        EMAIL_BACKEND: ${{ secrets.EMAIL_BACKEND }}
+        EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+        EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
+        EMAIL_USE_TLS: ${{ secrets.EMAIL_USE_TLS }}
+        EMAIL_USE_SSL: ${{ secrets.EMAIL_USE_SSL }}
+        EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+        EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
+        CELERY_BROKER_URL: ${{ secrets.CELERY_BROKER_URL }}
+        CELERY_RESULT_BACKEND: ${{ secrets.CELERY_RESULT_BACKEND }}
 
     - name: Run migrations
       run: poetry run python manage.py migrate
