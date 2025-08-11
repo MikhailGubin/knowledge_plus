@@ -3,8 +3,11 @@ services:
     build: .
     command: sh -c "python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8000"
     environment:
-      - DEBUG=True
-      - DATABASE_HOST=db
+      - SECRET_KEY=${SECRET_KEY}
+      - DEBUG=${DATABASE_DEBUG}
+      - DATABASE_HOST=${HOST}
+    env_file:
+      - .env
     volumes:
       - .:/app
       - static_volume:/app/staticfiles
@@ -28,6 +31,15 @@ services:
 
   db:
     image: postgres
+    environment:
+      - DEBUG=${DATABASE_DEBUG}
+      - DATABASE_HOST=${HOST}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - HOST=${HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_HOST_AUTH_METHOD=${POSTGRES_HOST_AUTH_METHOD}
     env_file:
       - .env
     expose:
@@ -49,8 +61,8 @@ services:
     volumes:
       - .:/code
     environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - DATABASE_HOST=db
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - DATABASE_HOST=${HOST}
     depends_on:
       - redis
       - db
@@ -61,8 +73,8 @@ services:
     volumes:
       - .:/code
     environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - DATABASE_HOST=db
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - DATABASE_HOST=${HOST}
     depends_on:
       - redis
       - db
