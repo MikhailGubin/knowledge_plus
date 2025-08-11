@@ -38,7 +38,7 @@ jobs:
         echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
         echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
         echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
-        echo "HOST=${{ secrets.HOST }}" >> .env
+        echo "POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}" >> .env
         echo "POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}" >> .env
         echo "POSTGRES_HOST_AUTH_METHOD=${{ secrets.POSTGRES_HOST_AUTH_METHOD }}" >> .env
         echo "ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}" >> .env
@@ -59,7 +59,7 @@ jobs:
         POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
         POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        HOST: ${{ secrets.HOST }}
+        POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
         ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
         ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
         EMAIL_BACKEND: ${{ secrets.EMAIL_BACKEND }}
@@ -99,11 +99,11 @@ jobs:
         chmod 600 ~/.ssh/id_ed25519
         echo "${{ secrets.SERVER_IP }} ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI..." >> ~/.ssh/known_hosts
 
-    - name: Test connection
-      run: ssh -v -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "echo 'Connected!'"
+#    - name: Test connection
+#      run: ssh -v -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "echo 'Connected!'"
 
-    - name: Debug web container
-      run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "cd ${{ secrets.DEPLOY_DIR }} && docker-compose logs web"
+#    - name: Debug web container
+#      run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "cd ${{ secrets.DEPLOY_DIR }} && docker-compose logs web"
 
 #    - name: Collect static
 #      run: |
@@ -126,12 +126,21 @@ jobs:
         # Применение миграций
         docker-compose exec -T web python manage.py migrate
 
-        # Сбор статических файлов
-        docker-compose exec -T web python manage.py collectstatic --noinput --clear
-        EOF
+    - name: Wait for DB
+      run: |
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "
+          cd ${{ secrets.DEPLOY_DIR }}
+          docker-compose exec -T db pg_isready -U postgres -h localhost -t 30
+        "        
 
     - name: Run tests
-      run: poetry run python manage.py test
+      run: |
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "
+          cd ${{ secrets.DEPLOY_DIR }}
+          docker-compose exec -T web python manage.py test --keepdb --noinput
+        "
+      env:
+        DJANGO_SETTINGS_MODULE: config.settings.test
 
   deploy:
     runs-on: ubuntu-latest

@@ -5,7 +5,12 @@ services:
     environment:
       - SECRET_KEY=${SECRET_KEY}
       - DEBUG=${DATABASE_DEBUG}
-      - DATABASE_HOST=${HOST}
+      - DB_HOST=${POSTGRES_HOST}
+      - DB_HOST=${POSTGRES_DB}
+      - DB_PORT=${POSTGRES_PORT}
+      - DB_NAME=${POSTGRES_DB}
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
     env_file:
       - .env
     volumes:
@@ -37,7 +42,6 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
-      - HOST=${HOST}
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_HOST_AUTH_METHOD=${POSTGRES_HOST_AUTH_METHOD}
     env_file:
