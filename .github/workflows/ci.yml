@@ -113,9 +113,7 @@ jobs:
 #        EOF
 
     - name: Run migrations
-      run: |
-        cd ${{ secrets.DEPLOY_DIR }}
-        poetry run python manage.py migrate
+      run: poetry run python manage.py migrate
 
     - name: Run tests
       run: poetry run python manage.py test
