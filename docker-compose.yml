@@ -6,7 +6,6 @@ services:
       - SECRET_KEY=${SECRET_KEY}
       - DEBUG=${DATABASE_DEBUG}
       - DB_HOST=${POSTGRES_HOST}
-      - DB_HOST=${POSTGRES_DB}
       - DB_PORT=${POSTGRES_PORT}
       - DB_NAME=${POSTGRES_DB}
       - DB_USER=${POSTGRES_USER}
@@ -38,7 +37,7 @@ services:
     image: postgres:16
     environment:
       - DEBUG=${DATABASE_DEBUG}
-      - HOST=${HOST}
+      - POSTGRES_HOST=${POSTGRES_HOST}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
@@ -66,7 +65,7 @@ services:
       - .:/code
     environment:
       - CELERY_BROKER_URL=${CELERY_BROKER_URL}
-      - DATABASE_HOST=${HOST}
+      - DATABASE_HOST=${POSTGRES_HOST}
     depends_on:
       - redis
       - db
@@ -78,7 +77,7 @@ services:
       - .:/code
     environment:
       - CELERY_BROKER_URL=${CELERY_BROKER_URL}
-      - DATABASE_HOST=${HOST}
+      - DATABASE_HOST=${POSTGRES_HOST}
     depends_on:
       - redis
       - db
