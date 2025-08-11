@@ -31,66 +31,66 @@ jobs:
     - name: Install dependencies
       run: poetry install
 
-    - name: Create .env file
-      run: |
-        echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" > .env
-        echo "DATABASE_DEBUG=${{ secrets.DATABASE_DEBUG }}" >> .env
-        echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
-        echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
-        echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env 
-        echo "HOST=${{ secrets.HOST }}" >> .env
-        echo "POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}" >> .env
-        echo "POSTGRES_HOST_AUTH_METHOD=${{ secrets.POSTGRES_HOST_AUTH_METHOD }}" >> .env
-        echo "ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}" >> .env
-        echo "ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}" >> .env
-        echo "EMAIL_BACKEND=${{ secrets.EMAIL_BACKEND }}" >> .env
-        echo "EMAIL_HOST=${{ secrets.EMAIL_HOST }}" >> .env
-        echo "EMAIL_PORT=${{ secrets.EMAIL_PORT }}" >> .env
-        echo "EMAIL_USE_TLS=${{ secrets.EMAIL_USE_TLS }}" >> .env
-        echo "EMAIL_USE_SSL=${{ secrets.EMAIL_USE_SSL }}" >> .env
-        echo "EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }}" >> .env
-        echo "EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}" >> .env
-        echo "CELERY_BROKER_URL=${{ secrets.CELERY_BROKER_URL }}" >> .env
-        echo "CELERY_RESULT_BACKEND=${{ secrets.CELERY_RESULT_BACKEND }}" >> .env
-
-      env:
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
-        DATABASE_DEBUG: ${{ secrets.DATABASE_DEBUG }}
-        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        HOST: ${{ secrets.HOST }}
-        ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
-        ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-        EMAIL_BACKEND: ${{ secrets.EMAIL_BACKEND }}
-        EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
-        EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
-        EMAIL_USE_TLS: ${{ secrets.EMAIL_USE_TLS }}
-        EMAIL_USE_SSL: ${{ secrets.EMAIL_USE_SSL }}
-        EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
-        EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
-        CELERY_BROKER_URL: ${{ secrets.CELERY_BROKER_URL }}
-        CELERY_RESULT_BACKEND: ${{ secrets.CELERY_RESULT_BACKEND }}
-
-    - name: Setup SSH
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-        chmod 600 ~/.ssh/id_ed25519
-        ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-
-    - name: Test SSH connection
-      run: ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "echo 'SSH works!'"
-
-    - name: Setup PostgreSQL
-      run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-        sudo apt update
-        sudo apt install -y postgresql postgresql-contrib
-        sudo -u postgres psql -c "CREATE USER ${{ secrets.POSTGRES_USER }} WITH PASSWORD '${{ secrets.POSTGRES_PASSWORD }}';"
-        sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.POSTGRES_DB }} OWNER ${{ secrets.POSTGRES_USER }};"
-        sudo systemctl restart postgresql
-        EOF
+#    - name: Create .env file
+#      run: |
+#        echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" > .env
+#        echo "DATABASE_DEBUG=${{ secrets.DATABASE_DEBUG }}" >> .env
+#        echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
+#        echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
+#        echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
+#        echo "HOST=${{ secrets.HOST }}" >> .env
+#        echo "POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}" >> .env
+#        echo "POSTGRES_HOST_AUTH_METHOD=${{ secrets.POSTGRES_HOST_AUTH_METHOD }}" >> .env
+#        echo "ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}" >> .env
+#        echo "ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}" >> .env
+#        echo "EMAIL_BACKEND=${{ secrets.EMAIL_BACKEND }}" >> .env
+#        echo "EMAIL_HOST=${{ secrets.EMAIL_HOST }}" >> .env
+#        echo "EMAIL_PORT=${{ secrets.EMAIL_PORT }}" >> .env
+#        echo "EMAIL_USE_TLS=${{ secrets.EMAIL_USE_TLS }}" >> .env
+#        echo "EMAIL_USE_SSL=${{ secrets.EMAIL_USE_SSL }}" >> .env
+#        echo "EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }}" >> .env
+#        echo "EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}" >> .env
+#        echo "CELERY_BROKER_URL=${{ secrets.CELERY_BROKER_URL }}" >> .env
+#        echo "CELERY_RESULT_BACKEND=${{ secrets.CELERY_RESULT_BACKEND }}" >> .env
+#
+#      env:
+#        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+#        DATABASE_DEBUG: ${{ secrets.DATABASE_DEBUG }}
+#        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+#        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+#        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+#        HOST: ${{ secrets.HOST }}
+#        ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+#        ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+#        EMAIL_BACKEND: ${{ secrets.EMAIL_BACKEND }}
+#        EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+#        EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
+#        EMAIL_USE_TLS: ${{ secrets.EMAIL_USE_TLS }}
+#        EMAIL_USE_SSL: ${{ secrets.EMAIL_USE_SSL }}
+#        EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+#        EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
+#        CELERY_BROKER_URL: ${{ secrets.CELERY_BROKER_URL }}
+#        CELERY_RESULT_BACKEND: ${{ secrets.CELERY_RESULT_BACKEND }}
+#
+#    - name: Setup SSH
+#      run: |
+#        mkdir -p ~/.ssh
+#        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+#        chmod 600 ~/.ssh/id_ed25519
+#        ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+#
+#    - name: Test SSH connection
+#      run: ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "echo 'SSH works!'"
+#
+#    - name: Setup PostgreSQL
+#      run: |
+#        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+#        sudo apt update
+#        sudo apt install -y postgresql postgresql-contrib
+#        sudo -u postgres psql -c "CREATE USER ${{ secrets.POSTGRES_USER }} WITH PASSWORD '${{ secrets.POSTGRES_PASSWORD }}';"
+#        sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.POSTGRES_DB }} OWNER ${{ secrets.POSTGRES_USER }};"
+#        sudo systemctl restart postgresql
+#        EOF
     
     - name: Run migrations
       run: poetry run python manage.py migrate
