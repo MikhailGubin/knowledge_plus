@@ -92,15 +92,30 @@ jobs:
 #        sudo systemctl restart postgresql
 #        EOF
 
-    - name: Collect static
+    - name: Setup SSH
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-        cd ${{ secrets.DEPLOY_DIR }}
-        poetry run python manage.py collectstatic --noinput
-        EOF
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_ed25519
+        chmod 600 ~/.ssh/id_ed25519
+        echo "${{ secrets.SERVER_IP }} ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI..." >> ~/.ssh/known_hosts
+
+    - name: Test connection
+      run: ssh -v -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "echo 'Connected!'"
+
+    - name: Collect static
+      run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "cd ${{ secrets.DEPLOY_DIR }} && docker-compose exec web python manage.py collectstatic --noinput"
+
+#    - name: Collect static
+#      run: |
+#        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+#        cd ${{ secrets.DEPLOY_DIR }}
+#        poetry run python manage.py collectstatic --noinput
+#        EOF
 
     - name: Run migrations
-      run: poetry run python manage.py migrate
+      run: |
+        cd ${{ secrets.DEPLOY_DIR }}
+        poetry run python manage.py migrate
 
     - name: Run tests
       run: poetry run python manage.py test
