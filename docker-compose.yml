@@ -5,8 +5,7 @@ services:
     environment:
       - SECRET_KEY=${SECRET_KEY}
       - DEBUG=${DATABASE_DEBUG}
-      - DB_HOST=${POSTGRES_HOST}
-      - DB_HOST=${POSTGRES_DB}
+      - DB_HOST=${HOST}
       - DB_PORT=${POSTGRES_PORT}
       - DB_NAME=${POSTGRES_DB}
       - DB_USER=${POSTGRES_USER}
