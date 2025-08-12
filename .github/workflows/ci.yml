@@ -6,6 +6,20 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        ports: [ '5432:5432' ]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - name: Check out code
       uses: actions/checkout@v3
@@ -92,55 +106,60 @@ jobs:
 #        sudo systemctl restart postgresql
 #        EOF
 
-    - name: Setup SSH
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_ed25519
-        chmod 600 ~/.ssh/id_ed25519
-        echo "${{ secrets.SERVER_IP }} ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI..." >> ~/.ssh/known_hosts
-
-#    - name: Test connection
-#      run: ssh -v -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "echo 'Connected!'"
-
-#    - name: Debug web container
-#      run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "cd ${{ secrets.DEPLOY_DIR }} && docker-compose logs web"
-
-#    - name: Collect static
+#    - name: Setup SSH
 #      run: |
-#        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-#        cd ${{ secrets.DEPLOY_DIR }}
-#        poetry run python manage.py collectstatic --noinput
-#        EOF
+#        mkdir -p ~/.ssh
+#        echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_ed25519
+#        chmod 600 ~/.ssh/id_ed25519
+#        echo "${{ secrets.SERVER_IP }} ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI..." >> ~/.ssh/known_hosts
 
-    - name: Run database operations
+    - name: Wait for PostgreSQL
       run: |
-        ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-        cd ${{ secrets.DEPLOY_DIR }}
+        until pg_isready -h localhost -p 5432 -U ${{ secrets.POSTGRES_USER }}; do
+          sleep 1        
+        done
 
-        # Проверка подключения к БД
-        docker-compose exec -T web python manage.py check --database default
-
-        # Создание директории для статики
-        mkdir -p static
-
-        # Применение миграций
-        docker-compose exec -T web python manage.py migrate
-
-    - name: Wait for DB
-      run: |
-        ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "
-          cd ${{ secrets.DEPLOY_DIR }}
-          docker-compose exec -T db pg_isready -U postgres -h localhost -t 30
-        "        
-
-    - name: Run tests
-      run: |
-        ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "
-          cd ${{ secrets.DEPLOY_DIR }}
-          docker-compose exec -T web python manage.py test --keepdb --noinput
-        "
+    - name: Run migration and tests
       env:
-        DJANGO_SETTINGS_MODULE: config.settings.test
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        HOST: localhost
+      run: |
+        python manage.py migrate
+        python manage.py test
+          
+
+#    - name: Run database operations
+#      run: |
+#        ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+#        cd ${{ secrets.DEPLOY_DIR }}
+#
+#        # Проверка подключения к БД
+#        docker-compose exec -T web python manage.py check --database default
+#
+#        # Создание директории для статики
+#        mkdir -p static
+#
+#        # Применение миграций
+#        docker-compose exec -T web python manage.py migrate
+#
+#    - name: Wait for DB
+#      run: |
+#        ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "
+#          cd ${{ secrets.DEPLOY_DIR }}
+#          docker-compose exec -T db pg_isready -U postgres -h localhost -t 30
+#        "
+#
+#    - name: Run tests
+#      run: |
+#        ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "
+#          cd ${{ secrets.DEPLOY_DIR }}
+#          docker-compose exec -T web python manage.py test --keepdb --noinput
+#        "
+#      env:
+#        DJANGO_SETTINGS_MODULE: config.settings.test
 
   deploy:
     runs-on: ubuntu-latest
