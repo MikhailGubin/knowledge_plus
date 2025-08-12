@@ -127,8 +127,8 @@ jobs:
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         HOST: localhost
       run: |
-        poetry run manage.py migrate
-        poetry run manage.py test
+        poetry run python manage.py migrate
+        poetry run python manage.py test
           
 
 #    - name: Run database operations
