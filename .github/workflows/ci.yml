@@ -179,7 +179,11 @@ jobs:
           sudo docker stop myapp || true
           sudo docker rm myapp || true        
           sudo docker build -t myapp .
-          sudo docker run myapp -d -p 80:8000 
+          sudo docker run -d \
+            -p 80:8000 \
+            --name myapp \
+            --restart unless-stopped \
+            myapp 
         EOF
 
 #    - name: Copy project files to server
