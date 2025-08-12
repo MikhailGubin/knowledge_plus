@@ -144,6 +144,48 @@ jobs:
             ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
         EOF
 
+    - name: Setup Systemd service
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          # Создаем сервисный файл с sudo
+          echo "[Unit]
+          Description=My Application
+          After=network.target
+    
+          [Service]
+          Type=simple
+          User=${{ secrets.SSH_USER }}
+          WorkingDirectory=/home/${{ secrets.SSH_USER }}/myapp
+          ExecStart=/usr/bin/docker compose -f /home/${{ secrets.SSH_USER }}/myapp/docker-compose.yml up
+          Restart=always
+    
+          [Install]
+          WantedBy=multi-user.target" | sudo tee /etc/systemd/system/myapp.service
+    
+          # Настраиваем права
+          sudo chmod 644 /etc/systemd/system/myapp.service
+          sudo systemctl daemon-reload
+          sudo systemctl enable myapp.service
+        EOF
+
+    - name: Restart application
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          # Остановка контейнера (если используется Docker)
+          docker compose -f ~/myapp/docker-compose.yml down || true
+
+#          # Пересборка (для Docker)
+#          docker compose -f ~/myapp/docker-compose.yml build
+
+          # Перезапуск через Systemd
+          if sudo systemctl is-active --quiet myapp.service; then
+            echo "♻️ Hot-reloading myapp..."
+            sudo systemctl restart myapp.service
+          else
+            echo "🚀 Starting myapp for the first time..."
+            sudo systemctl start myapp.service          
+        EOF
+
 #    - name: Copy project files to server
 #      run: |
 #        rsync -avz --exclude '__pycache__' . ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_DIR }}
