@@ -173,13 +173,7 @@ jobs:
         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
           
           docker compose -f ~/myapp/docker-compose.yml down || true
-
-          if sudo systemctl is-active --quiet myapp.service; then
-            echo "♻️ Hot-reloading myapp..."
-            sudo systemctl restart myapp.service
-          else
-            echo "🚀 Starting myapp for the first time..."
-            sudo systemctl start myapp.service          
+          sudo systemctl start myapp.service          
         EOF
 
 #    - name: Copy project files to server
