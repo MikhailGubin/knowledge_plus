@@ -171,13 +171,9 @@ jobs:
     - name: Restart application
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          # Остановка контейнера (если используется Docker)
+          
           docker compose -f ~/myapp/docker-compose.yml down || true
 
-#          # Пересборка (для Docker)
-#          docker compose -f ~/myapp/docker-compose.yml build
-
-          # Перезапуск через Systemd
           if sudo systemctl is-active --quiet myapp.service; then
             echo "♻️ Hot-reloading myapp..."
             sudo systemctl restart myapp.service
