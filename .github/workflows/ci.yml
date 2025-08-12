@@ -176,10 +176,10 @@ jobs:
         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'  
           cd ~/knowledge_plus
           git pull
-          docker stop myapp || true
-          docker rm myapp || true
-          docker build -t myapp .
-          docker run myapp -d --name myapp -p 80:8000 
+          sudo docker stop myapp || true
+          sudo docker rm myapp || true        
+          sudo docker build -t myapp .
+          sudo docker run myapp -d -p 80:8000 
         EOF
 
 #    - name: Copy project files to server
