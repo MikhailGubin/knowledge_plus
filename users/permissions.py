@@ -3,7 +3,7 @@ from rest_framework import permissions
 
 class IsModer(permissions.BasePermission):
     """
-    Проверяет, является ли пользователь владельцем
+    Проверяет, является ли пользователь модератором
     """
 
     message = "Вы не состоите в группе модераторы"
