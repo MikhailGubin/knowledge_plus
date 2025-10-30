@@ -1,0 +1,53 @@
+[
+{
+    "model": "materials.course",
+    "pk": 4,
+    "fields": {
+        "name": "Профессия Python-разработчик",
+        "preview": "",
+        "description": null
+    }
+},
+{
+    "model": "materials.course",
+    "pk": 5,
+    "fields": {
+        "name": "Профессия инженер по тестированию",
+        "preview": "",
+        "description": "Курс содержит полезную информацию для разных IT профессий"
+    }
+},
+{
+    "model": "materials.lesson",
+    "pk": 4,
+    "fields": {
+        "name": "Включения и генераторы",
+        "course": 4,
+        "preview": "",
+        "description": "Урок содержит базовую информацию",
+        "link_video": null
+    }
+},
+{
+    "model": "materials.lesson",
+    "pk": 5,
+    "fields": {
+        "name": "Вьюсеты и дженерики",
+        "course": 4,
+        "preview": "",
+        "description": "Урок содержит базовую информацию по Django Rest Framework",
+        "link_video": null
+    }
+},
+{
+    "model": "materials.lesson",
+    "pk": 6,
+    "fields": {
+        "name": "Нефункциональные виды тестирования",
+        "course": 5,
+        "preview": "",
+        "description": "Урок содержит базовую информацию по тестированию",
+        "link_video": null
+    }
+}
+]
